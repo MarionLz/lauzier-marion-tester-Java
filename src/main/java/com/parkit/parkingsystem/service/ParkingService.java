@@ -30,7 +30,9 @@ public class ParkingService {
     public void processIncomingVehicle() {
         try{
             ParkingSpot parkingSpot = getNextParkingNumberIfAvailable();
+            System.out.print("parking spot = " + parkingSpot);
             if(parkingSpot !=null && parkingSpot.getId() > 0){
+                System.out.println("DEBUG: Parking spot set to unavailable");
                 String vehicleRegNumber = getVehichleRegNumber();
                 parkingSpot.setAvailable(false);
                 parkingSpotDAO.updateParking(parkingSpot);//allot this parking space and mark it's availability as false
@@ -81,7 +83,7 @@ public class ParkingService {
         return parkingSpot;
     }
 
-    private ParkingType getVehichleType(){
+    public ParkingType getVehichleType(){
         System.out.println("Please select vehicle type from menu");
         System.out.println("1 CAR");
         System.out.println("2 BIKE");
