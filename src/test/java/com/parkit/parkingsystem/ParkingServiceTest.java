@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.lang.System.Logger;
 import java.util.Date;
 
 import static org.mockito.Mockito.*;
@@ -35,23 +34,11 @@ public class ParkingServiceTest {
 
     @BeforeEach
     private void setUpPerTest() {
-        try {
-            //when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-
-            //ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
-            //Ticket ticket = new Ticket();
-            //ticket.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
-            //ticket.setParkingSpot(parkingSpot);
-            //ticket.setVehicleRegNumber("ABCDEF");
-
-            //when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
-            
-            //when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
-
+        try {          
             parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         } catch (Exception e) {
             e.printStackTrace();
-            throw  new RuntimeException("Failed to set up test mock objects");
+            throw  new RuntimeException("Failed to set up ParkingService");
         }
     }
 

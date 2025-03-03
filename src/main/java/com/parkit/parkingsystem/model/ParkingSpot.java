@@ -34,7 +34,7 @@ public class ParkingSpot {
     }
 
     public void setAvailable(boolean available) {
-        isAvailable = available;
+        this.isAvailable = available;
     }
 
     @Override

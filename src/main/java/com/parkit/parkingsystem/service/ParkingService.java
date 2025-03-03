@@ -114,13 +114,17 @@ public class ParkingService {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);
                 parkingSpotDAO.updateParking(parkingSpot);
+                //ticketDAO.updateTicket(ticket);
                 System.out.println("Please pay the parking fare:" + ticket.getPrice());
                 System.out.println("Recorded out-time for vehicle number:" + ticket.getVehicleRegNumber() + " is:" + outTime);
+                System.out.println("Is parking spot available? " + parkingSpot.isAvailable());              
             }else{
                 System.out.println("Unable to update ticket information. Error occurred");
             }
+            
         }catch(Exception e){
             logger.error("Unable to process exiting vehicle",e);
         }
+        
     }
 }
