@@ -20,6 +20,10 @@ import java.util.Date;
 
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for the ParkingService class.
+ * Contains tests for processing incoming and exiting vehicles and other related methods.
+ */
 @ExtendWith(MockitoExtension.class)
 public class ParkingServiceTest {
 
@@ -32,6 +36,10 @@ public class ParkingServiceTest {
     @Mock
     private static TicketDAO ticketDAO;
 
+    /**
+     * Setup method to initialize the ParkingService before each test.
+     * This method runs before each test to ensure a fresh setup for every test case.
+     */
     @BeforeEach
     private void setUpPerTest() {
         try {          
@@ -42,6 +50,10 @@ public class ParkingServiceTest {
         }
     }
 
+    /**
+     * Test method for processing an exiting vehicle.
+     * Verifies if the parking spot and ticket are updated correctly when a vehicle exits.
+     */
     @Test
     public void processExitingVehicleTest() throws Exception {
     	
@@ -63,31 +75,32 @@ public class ParkingServiceTest {
         verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
     }
     
+    /**
+     * Test method for processing an incoming vehicle.
+     * Verifies if the parking spot is marked as occupied and the ticket is saved.
+     */
     @Test
     public void testProcessIncomingVehicle() throws Exception {
     	
     	when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-        
         when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
+        
         parkingService = spy(new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO));
         
-        // Mock de getNextParkingNumberIfAvailable()
         doReturn(new ParkingSpot(1, ParkingType.CAR, true))
             .when(parkingService).getNextParkingNumberIfAvailable();
         
-        //when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(1);
-
     	parkingService.processIncomingVehicle();
-        // Assert: Vérifier que la place de parking a été marquée comme occupée
+    	
         verify(parkingSpotDAO, times(1)).updateParking(any(ParkingSpot.class));
-
-        // Vérifier que le ticket a bien été sauvegardé
         verify(ticketDAO, times(1)).saveTicket(any(Ticket.class));
-
-        // Vérifier que la méthode getNbTicket a été appelée pour vérifier si c'est un client régulier
         verify(ticketDAO, times(1)).getNbTicket(any(String.class));
     }
     
+    /**
+     * Test method for processing an exiting vehicle where the update fails.
+     * Verifies that no parking spot update occurs if the ticket update fails.
+     */
     @Test
     public void processExitingVehicleTestUnableUpdate() throws Exception {
     	
@@ -108,6 +121,10 @@ public class ParkingServiceTest {
         verify(parkingSpotDAO, Mockito.times(0)).updateParking(any(ParkingSpot.class));
     }
     
+    /**
+     * Test method for retrieving the next available parking spot.
+     * Verifies that the correct parking spot is returned when a parking slot is available.
+     */
     @Test
     public void testGetNextParkingNumberIfAvailable() {
  
@@ -121,6 +138,10 @@ public class ParkingServiceTest {
         assertThat(parkingSpot.getParkingType()).isEqualTo(ParkingType.CAR);
     }
     
+    /**
+     * Test method for retrieving the next available parking spot when no parking spot is found.
+     * Verifies that `null` is returned when no parking spot is available.
+     */
     @Test
     public void testGetNextParkingNumberIfAvailableParkingNumberNotFound() {
     	
@@ -132,19 +153,19 @@ public class ParkingServiceTest {
     	assertNull(parkingSpot);
     }
     
+    /**
+     * Test method for handling invalid arguments in retrieving the next parking spot.
+     * Verifies that an exception is caught and the method returns `null` when invalid arguments are provided.
+     */
     @Test
     public void testGetNextParkingNumberIfAvailableParkingNumberWrongArgument() {
     	 ParkingService parkingServiceSpy = spy(parkingService);
                 
-         // Simuler une méthode getVehichleType() qui lève une IllegalArgumentException
          doThrow(new IllegalArgumentException("Entered input is invalid")).when(parkingServiceSpy).getVehichleType();
          
-         // Act
          ParkingSpot result = parkingServiceSpy.getNextParkingNumberIfAvailable();
 
-         // Assert
-         assertNull(result); // On vérifie que le résultat est bien null lorsque l'exception est levée
-         //verify(logger).error(eq("Error parsing user input for type of vehicle"), any(IllegalArgumentException.class)); // Vérification du log
+         assertNull(result);
     }
 
 }

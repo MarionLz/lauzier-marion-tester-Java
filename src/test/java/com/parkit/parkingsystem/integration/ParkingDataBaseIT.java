@@ -32,7 +32,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 
-
+/**
+ * Integration tests for parking system with database interactions.
+ * Verifies the interactions between the application and the database.
+ */
 @ExtendWith(MockitoExtension.class)
 public class ParkingDataBaseIT {
 
@@ -45,6 +48,10 @@ public class ParkingDataBaseIT {
     @Mock
     private static InputReaderUtil inputReaderUtil;
 
+    /**
+     * Setup method to initialize database connections and DAOs before all tests.
+     * This method is executed once before all tests in the class.
+     */
     @BeforeAll
     private static void setUp() throws Exception{
         parkingSpotDAO = new ParkingSpotDAO();
@@ -54,6 +61,10 @@ public class ParkingDataBaseIT {
         dataBasePrepareService = new DataBasePrepareService();
     }
 
+    /**
+     * Setup method for preparing the test environment before each test.
+     * This method clears the database entries and sets up mock behaviors for user inputs.
+     */
     @BeforeEach
     private void setUpPerTest() throws Exception {
         when(inputReaderUtil.readSelection()).thenReturn(1);
@@ -66,12 +77,15 @@ public class ParkingDataBaseIT {
 
     }
 
+    /**
+     * Test for parking a car.
+     * Verifies that a ticket is created and the parking spot is marked as occupied.
+     */
     @Test
     public void testParkingACar(){
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         parkingService.processIncomingVehicle();
         
-        //TODO: check that a ticket is actually saved in DB and Parking table is updated with availability
         Ticket ticket = ticketDAO.getTicket("ABCDEF");
         assertThat(ticket).isNotNull();
         
@@ -80,6 +94,11 @@ public class ParkingDataBaseIT {
         assertThat(parkingSpot.isAvailable()).isFalse();
     }
     
+    /**
+     * Test for processing parking lot exit.
+     * Verifies that after a vehicle exits, the ticket is updated with an exit time, 
+     * and the parking spot is made available.
+     */
     @Test
     public void testParkingLotExit(){
    
@@ -87,11 +106,11 @@ public class ParkingDataBaseIT {
         testParkingACar(); 
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         
-        // Simuler une entrée une heure plus tôt
+        // Simulating an exit one hour after parking
         Ticket ticket = ticketDAO.getTicket("ABCDEF");
         ticket.setInTime(new Date(System.currentTimeMillis() - 3600000));
         
-        //Connexion à la base de donnée pour simuler une entrée une heure plus tôt :
+        // Manually updating the ticket entry in the database to simulate a previous entry time
         Connection con = null;
         try {
         	con = dataBaseTestConfig.getConnection();
@@ -116,8 +135,8 @@ public class ParkingDataBaseIT {
         assertThat(ticket.getOutTime()).isAfter(ticket.getInTime());
         assertThat(ticket.getPrice()).isGreaterThan(0);
       
-        // Récupération de la valeur de isAvailable dans la base de donnée
-       boolean available = false;
+        // Retrieve the availability status of the parking spot from the database       boolean available = false;
+        boolean available = false;
         try {
         	con = dataBaseTestConfig.getConnection();
 	        PreparedStatement ps = con.prepareStatement(DBConstants.GET_PARKING_SPOT_ISAVAILABLE);
@@ -139,6 +158,10 @@ public class ParkingDataBaseIT {
         assertTrue(parkingSpot.isAvailable());
     }
     
+    /**
+     * Test for parking lot exit with a recurring user.
+     * Verifies that a discount is applied to the recurring user and the price is calculated correctly.
+     */
     @Test
     public void testParkingLotExitRecurringUser(){
     	
@@ -147,7 +170,7 @@ public class ParkingDataBaseIT {
 
     	double price = 0;
     	
-    	//Récupération du prix dans la BDD
+    	// Retrieve the ticket price from the database
     	Connection con = null;
         try {
         	con = dataBaseTestConfig.getConnection();

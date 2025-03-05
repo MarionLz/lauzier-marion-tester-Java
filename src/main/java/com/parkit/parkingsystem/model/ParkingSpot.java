@@ -2,11 +2,21 @@ package com.parkit.parkingsystem.model;
 
 import com.parkit.parkingsystem.constants.ParkingType;
 
+/**
+ * Model class representing a parking spot.
+ */
 public class ParkingSpot {
     private int number;
     private ParkingType parkingType;
     private boolean isAvailable;
 
+    /**
+     * Constructor to initialize a parking spot.
+     *
+     * @param number      The unique identifier of the parking spot.
+     * @param parkingType The type of vehicle the parking spot is for.
+     * @param isAvailable The availability status of the parking spot.
+     */
     public ParkingSpot(int number, ParkingType parkingType, boolean isAvailable) {
         this.number = number;
         this.parkingType = parkingType;
@@ -16,14 +26,15 @@ public class ParkingSpot {
     public int getId() {
         return number;
     }
-
+    
     public void setId(int number) {
         this.number = number;
     }
-
+    
     public ParkingType getParkingType() {
         return parkingType;
     }
+
 
     public void setParkingType(ParkingType parkingType) {
         this.parkingType = parkingType;
@@ -37,6 +48,12 @@ public class ParkingSpot {
         this.isAvailable = available;
     }
 
+    /**
+     * Checks if two parking spots are equal based on their unique number.
+     *
+     * @param o The object to compare.
+     * @return {@code true} if they are the same parking spot, {@code false} otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -45,6 +62,11 @@ public class ParkingSpot {
         return number == that.number;
     }
 
+    /**
+     * Generates the hash code for the parking spot based on its unique number.
+     *
+     * @return The hash code of the parking spot.
+     */
     @Override
     public int hashCode() {
         return number;

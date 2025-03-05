@@ -13,12 +13,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 
+/**
+ * DAO class responsible for database operations related to tickets.
+ */
 public class TicketDAO {
 
     private static final Logger logger = LogManager.getLogger("TicketDAO");
 
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
+    /**
+     * Saves a new ticket into the database.
+     *
+     * @param ticket The ticket to be saved.
+     * @return {@code true} if the ticket was saved successfully, {@code false} otherwise.
+     */
     public boolean saveTicket(Ticket ticket){
         Connection con = null;
         try {
@@ -40,6 +49,12 @@ public class TicketDAO {
         return false;
     }
 
+    /**
+     * Retrieves a ticket based on the vehicle registration number.
+     *
+     * @param vehicleRegNumber The vehicle registration number.
+     * @return The ticket associated with the vehicle, or {@code null} if not found.
+     */
     public Ticket getTicket(String vehicleRegNumber) {
         Connection con = null;
         Ticket ticket = null;
@@ -69,6 +84,12 @@ public class TicketDAO {
         return ticket;
     }
 
+    /**
+     * Updates an existing ticket in the database.
+     *
+     * @param ticket The ticket to be updated.
+     * @return {@code true} if the update was successful, {@code false} otherwise.
+     */
     public boolean updateTicket(Ticket ticket) {
         Connection con = null;
         try {
@@ -87,7 +108,12 @@ public class TicketDAO {
         return false;
     }
     
-
+    /**
+     * Retrieves the number of tickets associated with a given vehicle registration number.
+     *
+     * @param vehicleRegNumber The vehicle registration number.
+     * @return The number of tickets found.
+     */
     public int getNbTicket(String vehicleRegNumber) {
     	int nbTicket = 0;
         Connection con = null;

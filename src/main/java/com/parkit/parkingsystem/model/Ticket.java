@@ -3,6 +3,9 @@ package com.parkit.parkingsystem.model;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Model class representing a ticket.
+ */
 public class Ticket {
     private int id;
     private ParkingSpot parkingSpot;
