@@ -13,12 +13,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 
+/**
+ * DAO class responsible for database operations related to tickets.
+ */
 public class TicketDAO {
 
     private static final Logger logger = LogManager.getLogger("TicketDAO");
 
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
+    /**
+     * Saves a new ticket into the database.
+     *
+     * @param ticket The ticket to be saved.
+     * @return {@code true} if the ticket was saved successfully, {@code false} otherwise.
+     */
     public boolean saveTicket(Ticket ticket){
         Connection con = null;
         try {
@@ -36,10 +45,16 @@ public class TicketDAO {
             logger.error("Error fetching next available slot",ex);
         }finally {
             dataBaseConfig.closeConnection(con);
-            return false;
         }
+        return false;
     }
 
+    /**
+     * Retrieves a ticket based on the vehicle registration number.
+     *
+     * @param vehicleRegNumber The vehicle registration number.
+     * @return The ticket associated with the vehicle, or {@code null} if not found.
+     */
     public Ticket getTicket(String vehicleRegNumber) {
         Connection con = null;
         Ticket ticket = null;
@@ -65,10 +80,16 @@ public class TicketDAO {
             logger.error("Error fetching next available slot",ex);
         }finally {
             dataBaseConfig.closeConnection(con);
-            return ticket;
         }
+        return ticket;
     }
 
+    /**
+     * Updates an existing ticket in the database.
+     *
+     * @param ticket The ticket to be updated.
+     * @return {@code true} if the update was successful, {@code false} otherwise.
+     */
     public boolean updateTicket(Ticket ticket) {
         Connection con = null;
         try {
@@ -85,5 +106,33 @@ public class TicketDAO {
             dataBaseConfig.closeConnection(con);
         }
         return false;
+    }
+    
+    /**
+     * Retrieves the number of tickets associated with a given vehicle registration number.
+     *
+     * @param vehicleRegNumber The vehicle registration number.
+     * @return The number of tickets found.
+     */
+    public int getNbTicket(String vehicleRegNumber) {
+    	int nbTicket = 0;
+        Connection con = null;
+        try {
+            con = dataBaseConfig.getConnection();
+            PreparedStatement ps = con.prepareStatement(DBConstants.GET_NB_TICKET);
+            //Count VEHICLE_REG_NUMBER ticket
+            ps.setString(1,vehicleRegNumber);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            nbTicket = rs.getInt(1);
+            dataBaseConfig.closeResultSet(rs);
+            dataBaseConfig.closePreparedStatement(ps);
+        }catch (Exception ex){
+            logger.error("Error fetching next available slot",ex);
+        }finally {
+            dataBaseConfig.closeConnection(con);
+        }
+        return nbTicket;
+
     }
 }
